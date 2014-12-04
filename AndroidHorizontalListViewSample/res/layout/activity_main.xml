@@ -20,7 +20,8 @@
         <com.meetme.android.horizontallistview.HorizontalListView
             android:id="@+id/hlvSimpleList"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:scrollbars="horizontal" />
 
         <TextView
             android:layout_width="match_parent"
@@ -33,7 +34,8 @@
         <com.meetme.android.horizontallistview.HorizontalListView
             android:id="@+id/hlvCustomList"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:scrollbars="horizontal" />
 
         <TextView
             android:layout_width="match_parent"
@@ -50,7 +52,8 @@
             android:divider="#e00"
             android:fadingEdgeLength="5dp"
             android:requiresFadingEdge="horizontal"
-            widget:dividerWidth="3dp" />
+            widget:dividerWidth="3dp"
+            android:scrollbars="horizontal" />
     </LinearLayout>
 
 </ScrollView>

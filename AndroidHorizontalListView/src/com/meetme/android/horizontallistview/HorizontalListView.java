@@ -48,6 +48,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.OverScroller;
 import android.widget.ScrollView;
 import android.widget.Scroller;
 
@@ -98,7 +99,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private static final String BUNDLE_ID_PARENT_STATE = "BUNDLE_ID_PARENT_STATE";
 
     /** Tracks ongoing flings */
-    protected Scroller mFlingTracker = new Scroller(getContext());
+    protected OverScroller mFlingTracker = new OverScroller(getContext());
 
     /** Gesture listener to receive callbacks when gestures are detected */
     private final GestureListener mGestureListener = new GestureListener();
@@ -514,7 +515,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
 
         // Force the OS to redraw this view
-        invalidate();
+        if (!awakenScrollBars()) {
+            postInvalidate();
+        }
 
         // If the data changed then reset everything and render from scratch at the same offset as last time
         if (mDataChanged) {
@@ -983,7 +986,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     protected boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        mFlingTracker.fling(mNextX, 0, (int) -velocityX, 0, 0, mMaxX, 0, 0);
+    	int width = getWidth() - getPaddingRight() - getPaddingLeft();
+        mFlingTracker.fling(mNextX, 0, (int) -velocityX, 0, 0, mMaxX, 0, 0, width / 2, 0);
         setCurrentScrollState(OnScrollStateChangedListener.ScrollState.SCROLL_STATE_FLING);
         requestLayout();
         return true;
@@ -1309,11 +1313,28 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
 
         /** Sets the friction for the provided scroller */
-        public static void setFriction(Scroller scroller, float friction) {
+        public static void setFriction(OverScroller scroller, float friction) {
             if (scroller != null) {
                 scroller.setFriction(friction);
             }
         }
+    }
+
+@Override
+    protected int computeHorizontalScrollRange() {
+        final int count = mAdapter == null ? 0 : mAdapter.getCount();
+        final int contentWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+        if (count == 0) {
+            return contentWidth;
+        }
+
+        int scrollRange = getChildAt(0).getWidth() * count;
+        return scrollRange;
+    }
+
+    @Override
+    protected int computeHorizontalScrollOffset() {
+        return Math.max(0, mCurrentX);
     }
 
     @TargetApi(14)
@@ -1326,7 +1347,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
 
         /** Gets the velocity for the provided scroller */
-        public static float getCurrVelocity(Scroller scroller) {
+        public static float getCurrVelocity(OverScroller scroller) {
             return scroller.getCurrVelocity();
         }
     }
