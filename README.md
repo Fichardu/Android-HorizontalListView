@@ -27,7 +27,6 @@ Notice you set the `dividerWidth` via the XML namespace you just defined as it i
 
 ## Known limitations
  - Does not support trackball/d-pad navigation
- - Does not support scroll bars
  - Does not support header or footer views
  - Does not support disabled items
 
